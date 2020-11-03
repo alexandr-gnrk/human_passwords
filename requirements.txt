@@ -1,0 +1,7 @@
+bcrypt==3.2.0
+cffi==1.14.3
+loguru==0.5.3
+progressbar2==3.53.1
+pycparser==2.20
+python-utils==2.4.0
+six==1.15.0
