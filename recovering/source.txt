@@ -1,1 +1,0 @@
-Generated password hashes files were taken from https://github.com/vladlytvynenko/crypto-labs/tree/master/lab4

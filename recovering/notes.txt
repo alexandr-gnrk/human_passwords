@@ -1,0 +1,45 @@
+Generated password hashes files were taken from https://github.com/vladlytvynenko/crypto-labs/tree/master/lab4
+
+Спробуємо розшифрувати паролі захешовані за допомогою MD5, для будемо використовувати список з топ 100 тисяч найпоширеніших паролів. Для цього будемо використовувати "straight" mode (Dictionart attack). Він просто перебирає всі паролі що вказані у заданому файлі і намгається знайти такий же хеш у заданому файлі з хешами невідомих паролів.
+
+hashcat --optimized-kernel-enable -w 4 --force -a 0 -m 0 generated-md5.csv common100Kpass.txt -o output-md5.csv
+s
+
+[md5_1]
+[md5_2]
+
+Було відновлено 12530 з 177130 паролів, тобто біля 7 відсотків паролів. 
+
+Спробуємо ще раз тільки цього разу просто брутфорс зі стандартними налаштуваннями.
+
+hashcat --optimized-kernel-enable -w 3 -a 3 -m 0 generated-md5.csv -o output-md5-brute.csv
+[md5_brute_1]
+
+Цього разу вже було відновлено 43 відсотки (76918/177130) паролів всього за 2 хвилини.
+
+Перейдемо до паролів, що захешовані за допомогою SHA1 + salt
+
+Для цього використаємо скрипт adapter.py, який просто міняє у файлі місцями сіль та хеш.
+
+hashcat -w 3 -d 1 -a 0 -m 110 generated-sha1-reverse.csv common100Kpass.txt -o output-sha1.csv
+
+[sha1]
+
+Після майже 40 хв. роботи було розшифровано 10 відсотків паролів. Такий достатньо великий час для цього випадку черезте що по середині обчимлень дискретна відеокарта перестала відповідати і остальні обчислення проводилися лише на інтегрованій.
+
+Після 6 хвилин роботи було відновлено 11% паролів. Методом dictionary.
+
+hashcat.exe -w 3 -d 1 -a 0 -m 110 generated-sha1-reverse.csv common100Kpass.txt -o output-sha1-brute.csv
+
+Використовуючи брутфорс скористаємося знанням про те з яких символів складаєтсья пароль та в якому проміжку буде його довжина. Це 
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%&
+Спробуєммо знайти паролі довжиною в 5 символів.
+
+PS E:\hashcat-6.1.1> .\hashcat.exe -w 3 -d 1 -a 3 -m 110 -o output-sha1-brute.csv -1 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRST
+UVWXYZ1234567890!@#$%&" generated-sha1-reverse.csv ?1?1?1?1?1?1
+
+[sha1-brute]
+Можемо спостерігати що після 30 хвилин було розшифровано всього 71
+пароль (і це при швидкості 670 MH/s). Для повного перебору знадобиться біля 350 днів.
+
+hashcat.exe -w 3 -d 1 -a 0 -m 3200 generated-bcrypt.csv common100Kpass.txt -o output-bcrypt.csv
