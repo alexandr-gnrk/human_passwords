@@ -66,4 +66,4 @@ def get_password_generator():
                 partial(random.choice, TOP110),
                 partial(get_random_password, random.randint(6, 16)),
                 get_humanlike_password),
-            (10, 75, 5, 10))[0]()
+            (75, 10, 5, 10))[0]()
